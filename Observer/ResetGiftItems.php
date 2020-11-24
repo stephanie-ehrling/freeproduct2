@@ -49,6 +49,7 @@ class ResetGiftItems implements ObserverInterface
         $quote = $observer->getEvent()->getData('quote');
         /** @var ShippingAssignmentInterface $shippingAssignment */
         $shippingAssignment = $observer->getEvent()->getData('shipping_assignment');
+
         if ( $quote->getItemsCollection()->getItems() == null || $this->areGiftItemsReset)
         {
             return;
@@ -162,12 +163,9 @@ class ResetGiftItems implements ObserverInterface
      */
     protected function removeDeletedItemsFromQuoteItems(Quote $quote, array $deletedItemIds): void
     {
-        $quote->setItems(
-            $this->filterItemsNotInList(
-                $quote->getItemsCollection()->getItems(),
-                $deletedItemIds
-            )
-        );
+        $items = $quote->getItems() ?$quote->getItems(): array();
+        $filteredItems =  $this->filterItemsNotInList($items, $deletedItemIds);
+        $quote->setItems($filteredItems);
     }
 
     /**
